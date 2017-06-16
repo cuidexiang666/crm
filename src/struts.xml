@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>	
+
+	<constant name="struts.multipart.maxSize" value="5097152"></constant>
+	
+	<package name="crm" namespace="/" extends="struts-default">
+	
+		<interceptors>
+			<interceptor name="myMethodFilterInterceptor" class="cn.itcast.interceptor.MyMethodFilterInterceptor"></interceptor>
+			<!--  拦截栈（拦截器组）   拦截器  
+		   自定义一个拦截器栈，包括默认的拦截器栈+自定义的拦截器  -->
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="myMethodFilterInterceptor">
+					 <!-- 配置不拦截的方法 -->  
+					<param name="excludeMethods">login,toregist,save,list</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="myStack"></default-interceptor-ref>
+		
+		<global-results>
+			<result name="tologin">/login.jsp</result>
+		</global-results>
+	
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="toregister">/add.jsp</result>
+			<result name="tologin">/login.jsp</result>
+			<result name="index">/index.jsp</result>
+		</action>
+		<action name="customer_*" class="customerAction" method="{1}">
+		
+			<!-- 默认上传拦截器 -->
+			<interceptor-ref name="defaultStack">
+ 			  <param name="fileUpload.maximumSize">2097152</param>
+ 			</interceptor-ref>
+		
+			<result name="toadd">/jsp/customer/add.jsp</result>
+			<result name="success">/jsp/success.jsp</result>
+			<result name="list">/jsp/customer/list.jsp</result>
+			<result name="toupdate">/jsp/customer/edit.jsp</result>
+			<result name="error">/jsp/error.jsp</result>
+			<result name="tolist" type="redirectAction">customer_list</result>
+			<result name="download" type="stream">
+			
+				<!-- 两个头一个流 -->
+				<!-- 从action获取 contentType的结果，需要写一个getContentType方法 -->
+				<param name="contentType">${contentType}</param>
+				<!-- 从action获取 contentDisposition的结果，需要写一个getContentDisposition方法 -->
+				<param name="contentDisposition">${contentDisposition}</param>
+				<!-- 从action获取 inputStream的结果，需要写一个getInputStream方法 -->
+				<param name="inputStream">${inputStream}</param>
+			</result>
+		</action>
+		
+		<action name="linkman_*" class="linkManAction" method="{1}">
+			<result name="add">/jsp/linkman/add.jsp</result>
+			<result name="success">/jsp/success.jsp</result>
+			<result name="list">/jsp/linkman/list.jsp</result>
+			<result name="update">/jsp/linkman/edit.jsp</result>
+			<result name="tolist" type="redirectAction">linkman_list</result>
+		</action>
+		
+		
+		<action name="visit_*" class="visitAction" method="{1}">
+			<result name="add">/jsp/visit/add.jsp</result>
+			<result name="success">/jsp/success.jsp</result>
+			<result name="list">/jsp/visit/list.jsp</result>
+		</action>
+		
+		
+		<action name="EasyUI_*" class="EasyUIAction" method="{1}">
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="cn.itcast.entity.Customer" table="t_customer">
+		<id name="custId">
+			<generator class="native"></generator>
+		</id>
+		<property name="custName"></property>
+		<property name="custLinkman"></property>
+		<property name="custPhone"></property>
+		<property name="custMobile"></property>
+		<property name="filePath"></property>
+		
+		<many-to-one name="sourceBaseDict" column="custSource" class="cn.itcast.entity.BaseDict"></many-to-one>
+		<many-to-one name="levelBaseDict" column="custLevel" class="cn.itcast.entity.BaseDict"></many-to-one>
+		<bag name="visits">
+			<key column="customerId"></key>
+			<one-to-many class="cn.itcast.entity.Visit"/>
+		</bag>
+	</class>
+</hibernate-mapping>    

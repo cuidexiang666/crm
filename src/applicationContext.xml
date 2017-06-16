@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!-- 配置上数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+		<property name="jdbcUrl" value="jdbc:mysql:///crm"></property>
+		<property name="user" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	
+	<!-- 配置sessionfactory对象 -->
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 注入hibernate核心配置文件 -->
+		<property name="configLocations" value="classpath:hibernate.cfg.xml"></property>
+	</bean>
+	
+	
+	<!-- 配置事务 -->
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 配置通知 -->
+	<tx:advice id="txadvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*"/>
+			<tx:method name="delete*"/>
+			<tx:method name="update*"/>
+			<tx:method name="find*"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 配置切面 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* cn.itcast.service..*(..))" id="p1"/>
+		<aop:advisor advice-ref="txadvice" pointcut-ref="p1"/>
+	</aop:config>
+	
+	<bean id="userAction" class="cn.itcast.action.UserAction" scope="prototype">
+		<property name="userService" ref="userService"></property>
+	</bean>
+	
+	<bean id="userService" class="cn.itcast.service.impl.UserServiceImpl">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+	
+	<bean id="userDao" class="cn.itcast.dao.impl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 客户 -->
+	<bean id="customerAction" class="cn.itcast.action.CustomerAction" scope="prototype">
+		<property name="customerService" ref="customerService"></property>
+		<property name="baseDictService" ref="baseDictService"></property>
+	</bean>
+	
+	<bean id="customerService" class="cn.itcast.service.impl.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao"></property>
+	</bean>
+	
+	<bean id="customerDao" class="cn.itcast.dao.impl.CustomerDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	<bean id="baseDictDao" class="cn.itcast.dao.impl.BaseDictDaoImpl">
+	 <property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="baseDictService" class="cn.itcast.service.impl.BaseDictServiceImpl">
+	 <property name="baseDictDao" ref="baseDictDao"></property>
+	</bean>
+	
+	
+	
+	
+	<!-- 联系人 -->
+	<bean id="linkManAction" class="cn.itcast.action.LinkManAction" scope="prototype">
+		<property name="linkManService" ref="linkManService"></property>
+		<property name="customerService" ref="customerService"></property>
+	</bean>
+	
+	<bean id="linkManService" class="cn.itcast.service.impl.LinkManServiceImpl">
+		<property name="linkManDao" ref="linkManDao"></property>
+	</bean>
+	
+	<bean id="linkManDao" class="cn.itcast.dao.impl.LinkManDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 拜访记录 -->
+	<bean id="visitAction" class="cn.itcast.action.VisitAction" scope="prototype">
+		<property name="visitService" ref="visitService"></property>
+		<property name="customerService" ref="customerService"></property>
+		<property name="userService" ref="userService"></property>
+	</bean>
+	
+	<bean id="visitService" class="cn.itcast.service.impl.VisitServiceImpl">
+		<property name="visitDao" ref="visitDao"></property>
+	</bean>
+	
+	<bean id="visitDao" class="cn.itcast.dao.impl.VisitDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	<bean id="EasyUIAction" class="cn.itcast.action.EasyUIAction" scope="prototype">
+		<property name="customerService" ref="customerService"></property>
+	</bean>
+	
+	
+	
+</beans> 
+
+
+
+
+
+
+
+

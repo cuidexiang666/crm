@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+		  <link rel="stylesheet" type="text/css" href="../ui/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../ui/themes/icon.css">
+		<script type="text/javascript" src="../ui/jquery.min.js"></script>
+		<script type="text/javascript" src="../ui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../ui/locale/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../ui/jquery.serializejson.min.js"></script>
+		<script type="text/javascript">
+		
+		$(function(){
+			
+			$('#dg').datagrid({    
+			    url:'EasyUI_list.action',    
+			    columns:[[    
+			        {field:'custId',title:'客户Id',width:100},    
+			        {field:'custName',title:'客户名称',width:100},    
+			        {field:'custLinkman',title:'客户联系人',width:100},    
+			        {field:'custPhone',title:'客户手机',width:100},   
+			        {field:'custMobile',title:'客户电话',width:100},
+			        {field:'levelBaseDict',title:'等级',width:100,formatter:function(value,rowData,rowIndex){
+//	 		        	  value:字段值
+//	 		              rowData:字段所属的行值
+//	 		         	 rowIndex:0 索引值
+			        	  return  value.dictItemName;
+			        }},
+			        {field:'sourceBaseDict',title:'来源',width:100,formatter:function(value,rowData,rowIndex){
+//	 		        	  value:字段值
+//	 		              rowData:字段所属的行值
+//	 		         	 rowIndex:0 索引值
+			        	  return  value.dictItemName;
+			        }}
+			    ]],
+			    pageNumber:1,
+			    pageSize:5,
+			    pageList:[5,10,15],
+			    pagination:true
+			    
+			}); 
+			
+		});
+		
+		function search(){
+			$("#dg").datagrid('load',{"custName":$("#custName").val()});
+		}
+		
+		</script>
+	</head>
+	<body>
+		客户名称：<input name="custName" id="custName"/> <button type="button" onclick="search()">查询</button>
+		<table id="dg"></table>  
+	
+	</body>
+</html>
